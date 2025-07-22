@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Product } from "@/data";
+import { useAuth } from "@/providers/authProvider";
 import { useCart } from "@/providers/cartProvider";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
@@ -15,6 +16,8 @@ type ProductCardProps = {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+
   const {
     addToCart,
     favorites,
@@ -42,15 +45,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleToggleFavorite = async () => {
     setLoading(true);
-    if (isFavorite) {
-      await removeFromFavorites(product?.id);
-      toast.error("item removed to favourite")
-
-    } else {
-      await addToFavorites(product);
-      toast.success("item added to favourite")
-
+    if (!user) {
+      toast.error("Please log in to add items to favourite")
     }
+    else {
+      if (isFavorite) {
+        await removeFromFavorites(product?.id);
+        toast.error("item removed to favourite")
+
+      } else {
+        await addToFavorites(product);
+        toast.success("item added to favourite")
+
+      }
+    }
+
     setLoading(false);
   };
 
@@ -93,9 +102,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
             size="icon"
             className="rounded-full bg-[#1A2A44] text-[#FFFFFF] shadow-md hover:bg-[#14263A]"
             onClick={async () => {
-                await addToCart(product);
-                toast.success("item added to cart")
-              }}
+              if (!user) {
+                  toast.error("Please log in to add items to cart")
+                } else {
+                  await addToCart(product);
+                  toast.success("item added to cart")
+                }
+            }}
           >
             <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
@@ -193,8 +206,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
               size="icon"
               className="rounded-full bg-[#1A2A44] text-[#FFFFFF] shadow-md hover:bg-[#14263A]"
               onClick={async () => {
-                await addToCart(product);
-                toast.success("item added to cart")
+                if (!user) {
+                  toast.error("Please log in to add items to cart")
+                } else {
+                  await addToCart(product);
+                  toast.success("item added to cart")
+                }
+
               }}
             >
               <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />

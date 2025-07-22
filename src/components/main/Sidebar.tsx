@@ -28,6 +28,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   const pathname = usePathname();
   const { user } = useAuth();
   const { cartCount, favoritesCount } = useCart();
+  // console.log(user);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
